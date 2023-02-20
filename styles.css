@@ -1,0 +1,51 @@
+body {
+  background-color: #272b34;
+  color: #f5f6f9;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 20px;
+}
+
+  .container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 15px;
+
+}
+/* formatação do card */
+.card {
+  display: flex;
+  width: 400px;
+  height: 100px;
+  background-color: #3d3e43;
+  border-radius: 5px;
+  padding: 5px;
+  margin-bottom: 5px;
+
+}
+/* imagem do card */
+.card img {
+  display: block;
+  margin: 0 auto 10px;
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 5%;
+}
+/* nome do personagem */
+.card h3 {
+  margin-top: 0;
+  font-size: 20px;
+  text-align: left;
+  font-family: 'Open Sans', Verdana;
+}
+/* caracteristicas do persanagem */
+.card p {
+  margin-bottom: 0;
+  font-size: 12px;
+  text-align: right;
+  font-family: 'Open Sans', Tahoma;
+  color: #f4efee;
+
+}
+
