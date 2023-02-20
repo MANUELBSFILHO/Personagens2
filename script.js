@@ -36,7 +36,7 @@ const api = {
     })
   },
 }
-// main
+// script
 async function main() {
   const characters = await api.characters.get()
     .then(({ results }) => (
