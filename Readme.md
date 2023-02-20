@@ -6,3 +6,5 @@ O código também contém uma pequena folha de estilo CSS para definir a aparên
 Em seguida, ele faz uma solicitação para a API Rick and Morty, obtém a lista de todos os personagens e seleciona aleatoriamente seis personagens. 
 Por fim, ele atualiza cada card com informações do personagem selecionado. 
 O resultado será uma página HTML com um quadro de 6 cards de personagens do Rick and Morty, cada um com uma imagem e um nome.
+
+Ajustes com apoio do DIEGO SENA  :)

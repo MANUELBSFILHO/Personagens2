@@ -1,52 +1,76 @@
-const container = document.querySelector('.container');
-const apiUrl = 'https://rickandmortyapi.com/api/character';
-
-fetch(apiUrl)  /* REALIZA A REQUISIÇÃO */
-  .then(response => response.json())
-  .then(data => {
-    const characters = data.results;
-    const shuffledCharacters = shuffle(characters); /* shuffl e função usa o algoritmo de embaralhamento */
-    const randomCharacters = shuffledCharacters.slice(0, 6); /*  código usa o slice()método para extrair um conjunto aleatório de 6 caracteres */
-    randomCharacters.forEach(character => {     
-      const card = createCard(character);
-      container.appendChild(card);
-    });
-  })
-  .catch(error => console.log(error));
-
-function shuffle(array) {  /* aleatorização ou reorganização de uma lista de itens */
-  for (let i = array.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [array[i], array[j]] = [array[j], array[i]];
+// Utils
+function api_request({
+  path = '',
+  body = undefined,
+  method = 'GET',
+  baseURL = 'https://rickandmortyapi.com/api',
+  headers = {}
+}) {
+  const request_init = {
+    body, headers, method
   }
-  return array;
+  return fetch(baseURL + path, request_init).then(async response => {
+    const content_type = response.headers.get('Content-Type')
+    if (content_type.startsWith('application/json'))
+      return response.json()
+    return response.text()
+  })
 }
-
-function createCard(character) {  /* cria um elemento de card com base nas informações de um personagem */
-  const card = document.createElement('div');
-  card.classList.add('card');
-
-  const image = document.createElement('img');
-  image.src = character.image;
-  image.alt = character.name;
-
-  const name = document.createElement('h3');
-  name.textContent = character.name;
-
-  const species = document.createElement('p');
-  species.textContent = `Species: ${character.species}`;
-
-  const status = document.createElement('p');
-  status.textContent = `Status: ${character.status}`;
-
-  const location = document.createElement('p');
-  location.textContent = `Location: ${character.location.name}`;
-
-  card.appendChild(image);
-  card.appendChild(name);
-  card.appendChild(species);
-  card.appendChild(status);
-  card.appendChild(location);
-
-  return card;
+const api = {
+  locations: {
+    get: () => api_request({ method: 'GET', path: '/location' }),
+    id: (location_id = '') => ({
+      get: () => api_request({ method: 'GET', path: `/location/${location_id}` }),
+    })
+  },
+  characters: {
+    get: () => api_request({ method: 'GET', path: '/character' }),
+    id: (character_id = '') => ({
+      get: () => api_request({ method: 'GET', path: `/character/${character_id}` }),
+    })
+  },
+  episodes: {
+    get: () => api_request({ method: 'GET', path: '/episode' }),
+    id: (episode_id = '') => ({
+      get: () => api_request({ method: 'GET', path: `/episode/${episode_id}` }),
+    })
+  },
 }
+// main
+async function main() {
+  const characters = await api.characters.get()
+    .then(({ results }) => (
+      results
+        .sort(() => Math.random() > .5 ? 1 : -1)
+        .slice(0, 6)
+    ))
+  const showcase = document.getElementsByClassName('showcase')[0]
+  for (const character of characters) {
+    const character_card = document.createElement('div')
+    character_card.className = 'character-card'
+    character_card.innerHTML = `
+      <div class="character-card">
+        <img class="character-img" src="${character.image}" />
+        <div class="character-info">
+          <a class="character-name" href="${character.url}" target="_blank">
+            ${character.name}
+          </a>
+          <div class="character-status">
+            <span class="status-point" data-status="${character.status}"></span>
+            <span>${character.status} - ${character.species}</span>
+          </div>
+          <div class="character-section">
+            <div class="section-title">Last known location:</div>
+            <div class="section-value">${character.location.name}</div>
+          </div>
+          <div class="character-section">
+            <div class="section-title">First seen in:</div>
+            <div class="section-value">${character.origin.name}</div>
+          </div>
+        </div>
+      </div>
+    `
+    showcase.appendChild(character_card)
+  }
+}
+window.addEventListener('load', main)
